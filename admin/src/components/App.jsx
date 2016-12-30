@@ -22,24 +22,38 @@ class App extends Component {
     setOnAuthChange(this.updateAuth);
   }
 
+  authUserNav = () => {
+    return (
+      <span className="nav-item">
+        <span className="nav-item">
+          <Link to="/home">Home</Link>
+        </span>
+        <span className="nav-item">
+          <Link to="/comments">Comments</Link>
+        </span>
+        <span className="nav-item">
+          <Link to="/food">Food</Link>
+        </span>
+        <span className="nav-item">
+          <Link to="/logout">Logout</Link>
+        </span>
+      </span>
+    )
+  }
+
   render() {
     return (
       <div>
         <nav className="nav has-shadow">
-          <div className="nav-left">
-            <span className="nav-item">
-              {this.state.loggedIn ? (
-                  <Link to="/logout">Logout</Link>
-                ) : (
+          <div className="nav-right">
+            {this.state.loggedIn ? (
+                this.authUserNav()
+              ) : (
+                <span className="nav-item">
                   <Link to="/login">Login</Link>
-                )
-              }
-            </span>
-          </div>
-          <div className="nav-left">
-            <span className="nav-item">
-              <Link to="/home">Home</Link>
-            </span>
+                </span>
+              )
+            }
           </div>
         </nav>
         {this.props.children}

@@ -4,6 +4,7 @@ import Button from '../buttons/Button';
 import ButtonGroup from '../buttons/ButtonGroup';
 import {setData} from '../../utils/firebase';
 
+
 class Comment extends React.Component {
 
   approveButton = () => {
@@ -32,9 +33,9 @@ class Comment extends React.Component {
     const now = moment().unix();
     const diff = now - createdAt;
 
-    console.log(diff);
-
-    if (diff > 3600) {
+    if (diff > 86400) {
+      return `${Math.floor(diff/86400)}d`;
+    } else if (diff > 3600) {
       return `${Math.floor(diff/3600)}h`;
     } else if (diff > 60) {
       return `${Math.floor(diff/60)}m`;
@@ -91,13 +92,13 @@ class Comment extends React.Component {
         <article className="media">
           <div className="media-content">
             <div className="content">
-              <div>
+              <p>
                 <strong>{value.user} </strong>
                 <span> {this.timeSinceCreated()}</span>
                 <span className={`tag is-small ${this.stateClassName()}`}>
                   {value.state}
                 </span>
-              </div>
+              </p>
               <p>
                 {value.message}
               </p>

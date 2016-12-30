@@ -41,8 +41,10 @@ export const listenToRoute = (route, callback) => {
     let acm = [];
 
     _.transform(snapshot.val(), function(result, value, key) {
-      value.id = key;
-      result.push(value);
+      if (value) {
+        value.id = key;
+        result.push(value);
+      }
     }, acm);
 
     callback(acm);
