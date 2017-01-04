@@ -12,6 +12,7 @@ const config = {
 const firebaseApp = firebase.initializeApp(config);
 const firebaseAuth =  firebaseApp.auth();
 const firebaseDatabase =  firebaseApp.database();
+const firebaseStorage =  firebaseApp.storage();
 
 let authUser = null;
 let onAuthChange = () => {};
@@ -53,6 +54,20 @@ export const listenToRoute = (route, callback) => {
 
 export const setData = (route, data) => {
   firebaseDatabase.ref(route).set(data);
+}
+
+export const insertData = (route, child, data) => {
+  const key = firebaseDatabase.ref().child(child).push().key;
+  firebaseDatabase.ref(`${route}/${key}`).set(data);
+}
+
+export const uploadFile = (file, filename, callback = (() => {})) => {
+  const storageRef = firebaseStorage.ref();
+  const fileRef = storageRef.child(filename);
+
+  fileRef.put(file).then((snapshot) => {
+    callback(snapshot.downloadURL);
+  })
 }
 
 firebaseAuth.onAuthStateChanged((user) => {
