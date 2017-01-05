@@ -117,7 +117,8 @@ module.exports = {
           /\.(js|jsx)$/,
           /\.css$/,
           /\.json$/,
-          /\.svg$/
+          /\.svg$/,
+          /\.kml$/
         ],
         loader: 'url',
         query: {
@@ -162,6 +163,11 @@ module.exports = {
         query: {
           name: 'static/media/[name].[hash:8].[ext]'
         }
+      },
+      // Raw Loader
+      {
+        test: /\.kml$/,
+        loader: 'raw'
       }
     ]
   },

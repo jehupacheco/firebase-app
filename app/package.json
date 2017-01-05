@@ -48,15 +48,18 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "@mapbox/togeojson": "github:mapbox/togeojson",
     "bulma": "^0.2.3",
     "firebase": "^3.6.4",
     "lodash": "^4.17.2",
     "moment": "^2.17.1",
     "node-sass": "^4.1.1",
+    "raw-loader": "^0.5.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-google-maps": "^6.0.1",
-    "sass-loader": "^4.1.1"
+    "sass-loader": "^4.1.1",
+    "xmldom": "^0.1.27"
   },
   "scripts": {
     "start": "node scripts/start.js",
