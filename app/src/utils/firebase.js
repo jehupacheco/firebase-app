@@ -35,12 +35,11 @@ export const setOnAuthChange = (onChange) => {
   onAuthChange = onChange;
 }
 
-export const listenToRoute = (route, callback) => {
+export const listenToRoute = (route, callback, once = false, event = 'value') => {
   const routeRef = firebaseDatabase.ref(route);
 
-  routeRef.on('value', (snapshot) => {
+  const handler = (snapshot) => {
     let acm = [];
-
     _.transform(snapshot.val(), function(result, value, key) {
       if (value) {
         value.id = key;
@@ -49,7 +48,13 @@ export const listenToRoute = (route, callback) => {
     }, acm);
 
     callback(acm);
-  });
+  }
+
+  if (once) {
+    routeRef.on(event, handler);
+  } else {
+    routeRef.once(event, handler);
+  }
 }
 
 export const setData = (route, data) => {
