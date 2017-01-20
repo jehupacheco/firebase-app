@@ -16,7 +16,7 @@ const Food = ({id, icon, createdAt, lat, long, name, region}) => {
                 <strong>{name}</strong>
               </p>
               <p>
-                <strong>{region}</strong>
+                <strong>{region.replace('_',' ')}</strong>
               </p>
             </div>
           </div>

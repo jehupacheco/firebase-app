@@ -8,6 +8,30 @@ class FoodCreator extends React.Component {
   state = {
     icon: null,
     iconPreviewUrl: '',
+    errors: ''
+  }
+
+  validateInput = () => {
+    const {
+      icon,
+    } = this.state;
+    const name = this.inputName.value;
+    const region = this.map.getSearchValue();
+    let errors = '';
+
+    if (icon === null) {
+      errors = 'An icon is required';
+    }
+    if (name.length === 0) {
+      errors = `${errors}, A name is required`;
+    }
+    if (region.length === 0) {
+      errors = `${errors}, A region is required`;
+    }
+
+    this.setState({ errors });
+
+    return errors.length === 0;
   }
 
   createFood = (iconUrl) => {
@@ -18,7 +42,7 @@ class FoodCreator extends React.Component {
       lat: position.lat,
       lng: position.lng,
       name: this.inputName.value,
-      region: this.map.getSearchValue(),
+      region: this.map.getSearchValue().split(',')[0].toLowerCase().replace(' ','_'),
     }
 
     insertData('/food', 'food', food);
@@ -27,7 +51,9 @@ class FoodCreator extends React.Component {
   createFoodHandler = () => {
     const { icon } = this.state;
 
-    uploadFile(icon, icon.name, this.createFood);
+    if (this.validateInput()) {
+      uploadFile(icon, icon.name, this.createFood);
+    }
   }
 
   inputIconChangeHandler = (e) => {
@@ -45,6 +71,20 @@ class FoodCreator extends React.Component {
     reader.readAsDataURL(file);
   }
 
+  renderErrors = () => {
+    const errors = this.state.errors;
+
+    if (errors.length === 0) {
+      return '';
+    } else {
+      return (
+        <div className="notification is-danger">
+          {errors}
+        </div>
+      )
+    }
+  }
+
   render() {
     const {
       icon,
@@ -53,6 +93,7 @@ class FoodCreator extends React.Component {
 
     return (
       <div className="box">
+        { this.renderErrors()}
         <div className="columns">
           <div className="column">
             <h2>Create Food</h2>

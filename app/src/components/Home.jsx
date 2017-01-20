@@ -5,6 +5,7 @@ import Map from './map/Map';
 import regionsRawKml from '../regions.kml';
 import tj from '@mapbox/togeojson';
 import { listenToRoute } from '../utils/firebase';
+import { Polygon } from 'react-google-maps';
 
 const google = window.google;
 
@@ -48,22 +49,35 @@ class Home extends React.Component {
     const markers = [];
 
     _.map(food, (item, index) => {
-      const icon = {
-        url: item.icon,
-        size: new google.maps.Size(71, 71),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(17, 34),
-        scaledSize: new google.maps.Size(25, 25),
-      };
+      // const icon = {
+      //   url: item.icon,
+      //   size: new google.maps.Size(71, 71),
+      //   origin: new google.maps.Point(0, 0),
+      //   anchor: new google.maps.Point(17, 34),
+      //   scaledSize: new google.maps.Size(25, 25),
+      // };
 
       markers.push({
-        icon: icon,
+        // icon: icon,
         title: item.name,
         position: this.getRandomPosition(item.region),
       })
     });
 
     this.setState({ food, markers });
+  }
+
+  addFood = (food) => {
+    const {
+      markers
+    } = this.state;
+
+    markers.push({
+      title: food.name,
+      position: this.getRandomPosition(food.region),
+    });
+
+    this.setState({ markers });
   }
 
   commentsSortFunction = (comment) => {
@@ -75,7 +89,7 @@ class Home extends React.Component {
   }
 
   getLatLngCoordinate = (coordinates) => {
-    return _.map(coordinates, (coord) => { return {lat: coord[0], lng: coord[1]}; });
+    return _.map(coordinates, (coord) => { return {lat: coord[1], lng: coord[0]}; });
   }
 
   getLatLngBounds = (coordinates) => {
@@ -97,13 +111,33 @@ class Home extends React.Component {
       const key = region.properties.styleUrl.substr(1).toLowerCase().replace(/ /g, '_');
       this.regions.coordinates[key] = this.getLatLngCoordinate(coordinates);
       this.regions.bounds[key] = this.getLatLngBounds(this.regions.coordinates[key]);
-      this.regions.polygons[key] = new google.maps.Data.Polygon([this.regions.coordinates[key]]);
+      this.regions.polygons[key] = new google.maps.Polygon({path: this.regions.coordinates[key]});
     });
 
     listenToRoute('food', this.updateFood, true);
+    listenToRoute('food', this.addFood, false, 'child_added');
+  }
+
+  renderPolygons = () => {
+    const options = {
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      strokeColor: '#6d1414',
+      strokeWeight: 2,
+    };
+
+    return _.map(this.regions.coordinates, (coordinate, index) => {
+      return <Polygon path={coordinate} options={options} key={index}></Polygon>
+    });
   }
 
   render() {
+    const {
+      markers
+    } = this.state;
+
+
+
     return (
       <div className="section">
         <div className="container">
@@ -123,9 +157,12 @@ class Home extends React.Component {
                 mapElement={
                   <div style={{ height: '100%'}} />
                 }
-                markers={[]}
-                zoom={12}
-              />
+                markers={markers}
+                zoom={5}
+                center={{lat: -12.046374, lng:  -77.042793}}
+              >
+                {this.renderPolygons()}
+              </Map>
             </div>
           </div>
         </div>
